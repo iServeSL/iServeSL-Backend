@@ -105,6 +105,45 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+// Login route
+/**
+ * Authenticate user login.
+ * @name POST/api/login
+ * @function
+ * @memberof module:Server
+ * @inner
+ * @param {string} req.body.email - User's email address.
+ * @param {string} req.body.password - User's password.
+ * @returns {Object} Response object containing authentication token and username upon successful login.
+ */
+// Login route
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    // Compare passwords
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, "iServeSL@UniOfBeds");
+
+    // Send response with token
+    res.json({ token });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json({ error: "Failed to login" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
