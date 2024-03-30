@@ -13,7 +13,7 @@ app.use(express.json()); // Parsing incoming JSON requests
 // MongoDB connection
 mongoose
   .connect(
-    "mongodb+srv://SachinAkash01:wvHYdk4g9OwjUTsw@iservesl-db.7oh0h24.mongodb.net/",
+    "mongodb+srv://SachinAkash01:wvHYdk4g9OwjUTsw@iservesl-db.7oh0h24.mongodb.net/iServeSL-DB?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -23,13 +23,16 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Define User schema
-const userSchema = new mongoose.Schema({
-  username: String,
-  email: String,
-  password: String,
-  profession: String,
-  contact: String,
-});
+const userSchema = new mongoose.Schema(
+  {
+    username: String,
+    email: String,
+    password: String,
+    profession: String,
+    contact: String,
+  },
+  { versionKey: false }
+); // Set versionKey option to false to exclude __v field in the MongoDB cluster
 
 // Define User model
 const User = mongoose.model("users", userSchema);
@@ -61,13 +64,16 @@ app.post("/api/user", async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Add +94 for the contact number
+    const finalContactNumber = "+94" + contact;
+
     // Create new user
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       profession,
-      contact,
+      contact: finalContactNumber,
     });
 
     // Save the user to the database
