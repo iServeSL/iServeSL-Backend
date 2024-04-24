@@ -58,7 +58,9 @@ app.post("/api/user", async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res
+        .status(400)
+        .json({ error: "This email has already been used!" });
     }
 
     // Hash the password
@@ -105,7 +107,6 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-// Login route
 /**
  * Authenticate user login.
  * @name POST/api/login
@@ -116,7 +117,6 @@ app.get("/api/users", async (req, res) => {
  * @param {string} req.body.password - User's password.
  * @returns {Object} Response object containing authentication token and username upon successful login.
  */
-// Login route
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
