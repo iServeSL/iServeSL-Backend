@@ -168,6 +168,52 @@ app.get("/api/users/:email", async (req, res) => {
   }
 });
 
+// Define API endpoint for updating user details
+app.put("/api/users/:email", async (req, res) => {
+  const { email } = req.params;
+  const { contact, profession } = req.body;
+  try {
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $set: { contact, profession } },
+      { new: true }
+    );
+    if (user) {
+      res.json({ message: "User details updated successfully" });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    res.status(500).json({ error: "Failed to update user details" });
+  }
+});
+
+// Define API endpoint for changing user password
+app.put("/api/user/:email/password", async (req, res) => {
+  const { email } = req.params;
+  const { newPassword } = req.body;
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ error: "Failed to change password" });
+  }
+});
+
 /**
  * Authenticate user login.
  * @name POST/api/login
