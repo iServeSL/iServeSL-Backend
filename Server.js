@@ -122,8 +122,43 @@ app.get("/api/users/:email/phone", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      const { contact } = user; // Assuming the phone number is stored in the 'contact' field
-      res.json({ phone: contact }); // Return the phone number in the response
+      const { contact } = user;
+      res.json({ phone: contact });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    res.status(500).json({ error: "Failed to retrieve user" });
+  }
+});
+
+// Define API endpoint for retrieving a specific user's personal details by email
+/**
+ *
+ * Retrieve a specific user's personal details by email.
+ * @name GET/api/users/:email
+ * @function
+ * @memberof module:Server
+ * @inner
+ * @param {string} email - The email of the user.
+ * @returns {Object} Response object containing user's personal details.
+ */
+app.get("/api/users/:email", async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      const { contact } = user;
+      const { username } = user;
+      const { profession } = user;
+      const { password } = user;
+      res.json({
+        contact: contact,
+        username: username,
+        profession: profession,
+        password: password,
+      });
     } else {
       res.status(404).json({ error: "User not found" });
     }
