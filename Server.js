@@ -4,8 +4,11 @@ const cors = require("cors"); // Importing CORS middleware for enabling Cross-Or
 const mongoose = require("mongoose"); // Importing Mongoose for MongoDB interactions
 const bcrypt = require("bcryptjs"); // Importing bcrypt for password hashing
 const jwt = require("jsonwebtoken"); // Importing JSON Web Token for user authentication
+require("dotenv").config();
 
 const app = express(); // Creating an Express application
+const nodemailer = require("nodemailer");
+const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3001; // Defining the port number
 app.use(cors()); // Using CORS middleware to enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parsing incoming JSON requests
@@ -214,7 +217,37 @@ app.put("/api/user/:email/password", async (req, res) => {
   }
 });
 
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "akashmusix01@gmail.com",
+    pass: "jgnx dimp ysvm ciyq",
+  },
+});
+
+app.post("/api/send-email", async (req, res) => {
+  const { subject, feedback } = req.body;
+
+  const mailOptions = {
+    from: "akashmusix01@gmail.com",
+    to: "akashmusix01@gmail.com",
+    subject: `Feedback: ${subject}`,
+    text: feedback,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Feedback submission unsuccessful! Try again!");
+    } else {
+      console.log("Email sent: " + info.response);
+      res.status(200).send("Thanks for sharing your feedback with us..");
+    }
+  });
+});
+
 /**
+ *
  * Authenticate user login.
  * @name POST/api/login
  * @function
