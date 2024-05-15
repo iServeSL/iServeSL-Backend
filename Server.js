@@ -1,3 +1,4 @@
+// Copyright ©2024 SachinAkash01, All rights reserved.
 const express = require("express"); // Importing Express.js framework
 const axios = require("axios"); // Importing Axios for making HTTP requests
 const cors = require("cors"); // Importing CORS middleware for enabling Cross-Origin Resource Sharing
