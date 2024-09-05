@@ -17,7 +17,7 @@ app.use(express.json()); // Parsing incoming JSON requests
 // MongoDB connection
 mongoose
   .connect(
-    "mongodb+srv://SachinAkash01:wvHYdk4g9OwjUTsw@iservesl-db.7oh0h24.mongodb.net/iServeSL-DB?retryWrites=true&w=majority",
+    "mongodb+srv://SachinAkash01:<password>@iservesl-db.7oh0h24.mongodb.net/iServeSL-DB?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
